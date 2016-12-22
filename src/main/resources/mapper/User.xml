@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="User">
+
+	<resultMap id="UserMap" type="User">
+		<result property="id" column="id" />
+		<result property="name" column="name" />
+        <result property="createTime" column="createTime" />
+    </resultMap>
+
+	<insert id="insert" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO user
+		VALUES(#{id}, #{name}, #{createTime})
+	</insert>
+
+	<update id="updateById" parameterType="User">
+		UPDATE user 
+		SET 
+			name = #{name}
+		WHERE id = #{id}
+	</update>
+	
+	<delete id="deleteById" parameterType="Long">
+		DELETE FROM user WHERE id = #{id}
+	</delete>
+
+	<select id="selectById" parameterType="Long" resultMap="UserMap">
+		SELECT * FROM user WHERE id = #{id}
+	</select>
+
+	<select id="selectForPage" parameterType="Map" resultMap="UserMap">
+		SELECT * 
+		FROM user 
+		<where>
+			<if test="id != null and  id != ''">
+				AND id = #{id}
+			</if>
+			<if test="name != null and  name != ''">
+				AND name = #{name}
+			</if>
+            <if test="createTime != null and  createTime != ''">
+                AND createTime = #{createTime}
+            </if>
+		</where>
+		ORDER BY id DESC
+		LIMIT #{startIndex}, #{pageSize}
+	</select>
+	
+	<select id="selectForPageTotalCount" parameterType="Map" resultType="Integer">
+		SELECT COUNT(1) 
+		FROM user 
+		<where>
+            <if test="id != null and  id != ''">
+                AND id = #{id}
+            </if>
+            <if test="name != null and  name != ''">
+                AND name = #{name}
+            </if>
+            <if test="createTime != null and  createTime != ''">
+                AND createTime = #{createTime}
+            </if>
+		</where>
+	</select>
+</mapper>
